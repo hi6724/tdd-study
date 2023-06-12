@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import SummaryForm from '../SummaryForm';
 import userEvent from '@testing-library/user-event';
 
@@ -19,10 +19,10 @@ test('disables button on first click and enables on second click', async () => {
   });
   const confirmButton = screen.getByRole('button', { name: /confirm order/i });
 
-  await user.click(checkbox);
+  await act(() => user.click(checkbox));
   expect(confirmButton).toBeEnabled();
 
-  await user.click(checkbox);
+  await act(() => user.click(checkbox));
   expect(confirmButton).toBeDisabled();
 });
 
@@ -31,15 +31,16 @@ test('popover responds to hover', async () => {
   render(<SummaryForm />);
 
   const nullPopover = screen.queryByText(
-    /no ice cream will actually be delivered/i
+    /No ice cream will actually be delivered/i
   );
   expect(nullPopover).not.toBeInTheDocument();
 
   const termsAndConditions = screen.getByText(/terms and conditions/i);
-  await user.hover(termsAndConditions);
-  const popover = screen.getByText(/no ice cream will actually be deliverd/i);
+  await act(() => user.hover(termsAndConditions));
+  const popover = screen.getByText(/no ice cream will actually be delivered/i);
   expect(popover).toBeInTheDocument();
 
-  await user.unhover(termsAndConditions);
+  await act(() => user.unhover(termsAndConditions));
+  await act(() => new Promise((r) => setTimeout(r, 1000)));
   expect(popover).not.toBeInTheDocument();
 });
